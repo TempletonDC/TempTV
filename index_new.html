@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templeton Academy — Campus Display</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     TEMPLETON ACADEMY BRAND COLORS (from Brand Guide v001)
+     ============================================================ */
+  :root {
+    /* Primary palette */
+    --t-pink:    #f5b6e9;
+    --t-cyan:    #78e1e8;
+    --t-red:     #f55657;
+    --t-blue:    #455be2;
+    --t-yellow:  #ffbb22;
+    --t-green:   #018e75;
+    --t-peach:   #edaf84;
+    --t-purple:  #822f91;
+    --t-blush:   #eadbde;
+    --t-dark:    #262626;
+
+    /* Secondary palette */
+    --t-deep-purple: #574675;
+    --t-wine:        #7a0e5b;
+    --t-magenta:     #db3198;
+    --t-sage:        #b2d28a;
+    --t-lime:        #c9f414;
+
+    /* Functional */
+    --bg:        #262626;
+    --text:      #ffffff;
+    --text-muted: #9a9a9a;
+    --success:   #4ADE80;
+    --warning:   #FBBF24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 2px solid #3a3a3a;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      var(--t-red), var(--t-yellow), var(--t-green),
+      var(--t-cyan), var(--t-blue), var(--t-purple), var(--t-pink));
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* SVG-based T? logo mark */
+  .logo-mark {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .brand-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .brand-text .subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--t-cyan);
+    font-weight: 600;
+  }
+
+  /* Clock area */
+  .clock-area {
+    text-align: right;
+  }
+
+  .clock-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.2rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+
+  .clock-time .ampm {
+    font-size: 1.2rem;
+    color: var(--t-yellow);
+    font-weight: 500;
+    margin-left: 0.25rem;
+  }
+
+  .clock-time .blink {
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0.25; }
+  }
+
+  .clock-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.25rem;
+  }
+
+  /* ============================================================
+     MAIN GRID
+     ============================================================ */
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    min-height: 0;
+  }
+
+  /* ============================================================
+     PANEL BASE STYLES
+     ============================================================ */
+  .panel {
+    border-radius: 14px;
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* ============================================================
+     TRAIN PANEL
+     ============================================================ */
+  .train-panel {
+    background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+    border: 1px solid #3a3a3a;
+  }
+
+  .train-panel .panel-label {
+    color: var(--t-cyan);
+  }
+
+  .train-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .live-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--success);
+    background: rgba(74, 222, 128, 0.1);
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+    font-weight: 600;
+    animation: livePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .train-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow-y: auto;
+  }
+
+  .train-row {
+    display: grid;
+    grid-template-columns: 5px 52px 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .train-row:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .train-line-bar {
+    width: 5px;
+    height: 28px;
+    border-radius: 3px;
+  }
+
+  .train-line-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 0.2rem 0;
+    border-radius: 5px;
+    letter-spacing: 0.05em;
+  }
+
+  .train-dest {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .train-car {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+  }
+
+  .train-eta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: right;
+    min-width: 55px;
+  }
+
+  .train-eta .unit {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    margin-left: 1px;
+  }
+
+  .train-eta.arriving {
+    color: var(--success);
+    font-size: 0.85rem;
+    animation: arrPulse 1.5s ease-in-out infinite;
+  }
+
+  .train-eta.near {
+    color: var(--warning);
+  }
+
+  @keyframes arrPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .train-loading, .train-error {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  /* ============================================================
+     RIGHT COLUMN
+     ============================================================ */
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 0;
+  }
+
+  /* WEATHER PANEL */
+  .weather-panel {
+    background: linear-gradient(135deg, var(--t-green) 0%, #015c4e 100%);
+    border: 1px solid rgba(1, 142, 117, 0.4);
+    flex-shrink: 0;
+  }
+
+  .weather-panel .panel-label {
+    color: var(--t-lime);
+  }
+
+  .weather-body {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .weather-icon {
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .weather-temp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .weather-condition {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2px;
+  }
+
+  .weather-details {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .weather-detail label {
+    display: block;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .weather-detail span {
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .weather-detail span.hi { color: var(--t-yellow); }
+  .weather-detail span.lo { color: var(--t-cyan); }
+
+  /* CALENDAR PANEL */
+  .calendar-panel {
+    background: linear-gradient(135deg, #2d2050, #1e1535);
+    border: 1px solid rgba(130, 47, 145, 0.3);
+    flex: 1;
+    min-height: 0;
+  }
+
+  .calendar-panel .panel-label {
+    color: var(--t-pink);
+  }
+
+  .event-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    overflow-y: auto;
+  }
+
+  .event-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.5rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.3s;
+  }
+
+  .event-row.current {
+    background: rgba(245, 182, 233, 0.08);
+    border-color: rgba(245, 182, 233, 0.25);
+  }
+
+  .event-row.past {
+    opacity: 0.35;
+  }
+
+  .event-bar {
+    width: 3px;
+    height: 32px;
+    border-radius: 2px;
+    background: var(--t-purple);
+    flex-shrink: 0;
+  }
+
+  .event-row.current .event-bar {
+    background: var(--t-pink);
+    box-shadow: 0 0 8px rgba(245, 182, 233, 0.4);
+  }
+
+  .event-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    min-width: 65px;
+    flex-shrink: 0;
+  }
+
+  .event-row.current .event-time {
+    color: var(--t-pink);
+  }
+
+  .event-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .event-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .event-row.past .event-title {
+    text-decoration: line-through;
+  }
+
+  .event-location {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+  }
+
+  .now-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    color: var(--t-pink);
+    background: rgba(245, 182, 233, 0.12);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ============================================================
+     FOOTER / MARQUEE
+     ============================================================ */
+  .footer-marquee {
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    border-top: 1px solid #3a3a3a;
+    padding: 0.45rem 0;
+    position: relative;
+  }
+
+  .footer-marquee::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      var(--t-red), var(--t-yellow), var(--t-green),
+      var(--t-cyan), var(--t-blue), var(--t-purple), var(--t-pink));
+  }
+
+  .marquee-track {
+    display: inline-block;
+    white-space: nowrap;
+    animation: scroll 35s linear infinite;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .marquee-track .sep {
+    display: inline-block;
+    margin: 0 2rem;
+    color: var(--t-yellow);
+    opacity: 0.5;
+  }
+
+  .marquee-track .msg { color: var(--t-blush); }
+
+  @keyframes scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--text-muted);
+    border-top: 1px solid #2a2a2a;
+  }
+
+  /* WMATA line colors */
+  .line-RD { --lc: #E51636; }
+  .line-OR { --lc: #F68712; }
+  .line-BL { --lc: #0795D3; }
+  .line-GR { --lc: #00B140; }
+  .line-YL { --lc: #FFD520; }
+  .line-SV { --lc: #A2A4A1; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+  /* Decorative question mark dots — brand motif */
+  .deco-dots {
+    position: absolute;
+    opacity: 0.06;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header">
+  <div class="brand">
+    <!-- Templeton T? logo mark (SVG approximation) -->
+    <svg class="logo-mark" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M25 30 C25 15, 75 15, 75 30 C75 50, 50 50, 50 70 L50 90"
+            stroke="#78e1e8" stroke-width="12" stroke-linecap="round" fill="none"/>
+      <circle cx="50" cy="108" r="7" fill="#78e1e8"/>
+    </svg>
+    <div class="brand-text">
+      <h1>Templeton Academy</h1>
+      <div class="subtitle">Campus Information Display</div>
+    </div>
+  </div>
+  <div class="clock-area">
+    <div class="clock-time" id="clock"></div>
+    <div class="clock-date" id="date"></div>
+  </div>
+</header>
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+<main class="main">
+  <!-- LEFT: WMATA TRAINS -->
+  <div class="panel train-panel">
+    <div class="train-header">
+      <div class="panel-label">🚇 Gallery Pl-Chinatown — Next Arrivals</div>
+      <div class="live-badge" id="liveBadge">● LIVE</div>
+    </div>
+    <div class="train-list" id="trainList">
+      <div class="train-loading">Loading train predictions…</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: WEATHER + CALENDAR -->
+  <div class="right-col">
+    <!-- WEATHER -->
+    <div class="panel weather-panel">
+      <div class="panel-label">☀ Current Weather</div>
+      <div class="weather-body">
+        <div class="weather-icon" id="weatherIcon">—</div>
+        <div>
+          <div class="weather-temp" id="weatherTemp">--°</div>
+          <div class="weather-condition" id="weatherCond">Loading…</div>
+        </div>
+      </div>
+      <div class="weather-details">
+        <div class="weather-detail"><label>High</label><span class="hi" id="weatherHi">--°</span></div>
+        <div class="weather-detail"><label>Low</label><span class="lo" id="weatherLo">--°</span></div>
+        <div class="weather-detail"><label>Humidity</label><span id="weatherHum">--%</span></div>
+        <div class="weather-detail"><label>Wind</label><span id="weatherWind">-- mph</span></div>
+      </div>
+    </div>
+
+    <!-- CALENDAR / EVENTS -->
+    <div class="panel calendar-panel">
+      <div class="panel-label">📅 Today's Schedule</div>
+      <div class="event-list" id="eventList">
+        <!-- Events will be rendered here -->
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============================================================
+     FOOTER MARQUEE
+     ============================================================ -->
+<div class="footer-marquee">
+  <div class="marquee-track" id="marquee"></div>
+</div>
+
+<div class="status-bar">
+  <span id="lastUpdate">Last updated: --:--</span>
+  <span id="dataSource">Connecting…</span>
+</div>
+
+<script>
+// ================================================================
+// CONFIGURATION
+// ================================================================
+const CONFIG = {
+  schoolName: "Templeton Academy",
+  // WMATA
+  wmataKey: "cfba80d9e11345c0936871c360191696",
+  // Gallery Place-Chinatown: F01 (Green/Yellow), B01 (Red)
+  wmataStations: "F01,B01",
+  wmataRefreshMs: 20000, // 20 seconds
+
+  // Weather — Open-Meteo (free, no key)
+  // Coordinates for Gallery Place-Chinatown area, Washington DC
+  weatherLat: 38.8983,
+  weatherLon: -77.0219,
+  weatherRefreshMs: 600000, // 10 minutes
+
+  // Google Calendar — see README for setup instructions
+  // Set your Google Calendar API key and calendar ID below
+  gcalApiKey: "",       // YOUR_GOOGLE_CALENDAR_API_KEY
+  gcalCalendarId: "",   // YOUR_CALENDAR_ID@group.calendar.google.com
+  gcalRefreshMs: 300000, // 5 minutes
+
+  // Marquee messages
+  marqueeMessages: [
+    "Welcome to Templeton Academy — Never Stop Being Curious!",
+    "Restorative Work sessions are held Monday mornings",
+    "Bus departures at 3:15 PM — Check the main office for schedule changes",
+    "The City Is Our Classroom",
+  ],
+};
+
+// ================================================================
+// WMATA LINE CONFIG
+// ================================================================
+const WMATA_LINES = {
+  RD: { name: "Red",    color: "#E51636" },
+  OR: { name: "Orange", color: "#F68712" },
+  BL: { name: "Blue",   color: "#0795D3" },
+  GR: { name: "Green",  color: "#00B140" },
+  YL: { name: "Yellow", color: "#FFD520" },
+  SV: { name: "Silver", color: "#A2A4A1" },
+};
+
+// WMO weather code → emoji + description
+const WMO_CODES = {
+  0: ["☀️", "Clear Sky"],
+  1: ["🌤️", "Mostly Clear"],
+  2: ["⛅", "Partly Cloudy"],
+  3: ["☁️", "Overcast"],
+  45: ["🌫️", "Foggy"],
+  48: ["🌫️", "Rime Fog"],
+  51: ["🌦️", "Light Drizzle"],
+  53: ["🌦️", "Drizzle"],
+  55: ["🌧️", "Heavy Drizzle"],
+  61: ["🌧️", "Light Rain"],
+  63: ["🌧️", "Rain"],
+  65: ["🌧️", "Heavy Rain"],
+  66: ["🌨️", "Freezing Rain"],
+  67: ["🌨️", "Heavy Freezing Rain"],
+  71: ["❄️", "Light Snow"],
+  73: ["❄️", "Snow"],
+  75: ["❄️", "Heavy Snow"],
+  77: ["🌨️", "Snow Grains"],
+  80: ["🌦️", "Light Showers"],
+  81: ["🌧️", "Showers"],
+  82: ["⛈️", "Heavy Showers"],
+  85: ["🌨️", "Snow Showers"],
+  86: ["🌨️", "Heavy Snow Showers"],
+  95: ["⛈️", "Thunderstorm"],
+  96: ["⛈️", "Thunderstorm w/ Hail"],
+  99: ["⛈️", "Severe Thunderstorm"],
+};
+
+// ================================================================
+// CLOCK
+// ================================================================
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = String(now.getMinutes()).padStart(2, "0");
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  const showColon = now.getSeconds() % 2 === 0;
+
+  document.getElementById("clock").innerHTML =
+    `${h12}<span class="blink">:</span>${m}<span class="ampm">${ampm}</span>`;
+
+  document.getElementById("date").textContent =
+    now.toLocaleDateString("en-US", {
+      weekday: "long", month: "long", day: "numeric", year: "numeric"
+    });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ================================================================
+// WMATA TRAINS
+// ================================================================
+async function fetchTrains() {
+  try {
+    const url = `https://api.wmata.com/StationPrediction.svc/json/GetPrediction/${CONFIG.wmataStations}`;
+    const res = await fetch(url, {
+      headers: { "api_key": CONFIG.wmataKey }
+    });
+    if (!res.ok) throw new Error(`WMATA ${res.status}`);
+    const data = await res.json();
+    renderTrains(data.Trains || []);
+    document.getElementById("liveBadge").textContent = "● LIVE";
+    document.getElementById("dataSource").textContent = "● WMATA Live Data";
+    document.getElementById("dataSource").style.color = "#4ADE80";
+  } catch (err) {
+    console.error("WMATA error:", err);
+    document.getElementById("liveBadge").textContent = "⚠ ERROR";
+    document.getElementById("liveBadge").style.color = "#f55657";
+    document.getElementById("dataSource").textContent = "⚠ WMATA connection issue — retrying…";
+    document.getElementById("dataSource").style.color = "#f55657";
+  }
+  document.getElementById("lastUpdate").textContent =
+    `Last updated: ${new Date().toLocaleTimeString()}`;
+}
+
+function renderTrains(trains) {
+  const list = document.getElementById("trainList");
+
+  // Filter out trains with no useful info
+  const filtered = trains.filter(t =>
+    t.Line && t.Line !== "--" && t.Line !== "No" &&
+    t.DestinationName && t.DestinationName !== "No Passenger" &&
+    t.DestinationName !== "Train"
+  );
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="train-loading">No trains currently predicted</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((t, i) => {
+    const line = WMATA_LINES[t.Line] || { name: t.Line, color: "#666" };
+    const isArr = t.Min === "ARR" || t.Min === "BRD";
+    const isNear = !isArr && !isNaN(t.Min) && parseInt(t.Min) <= 3;
+    const etaClass = isArr ? "arriving" : isNear ? "near" : "";
+
+    return `
+      <div class="train-row">
+        <div class="train-line-bar" style="background:${line.color}; box-shadow:0 0 6px ${line.color}55;"></div>
+        <div class="train-line-badge" style="background:${line.color}22; border:1.5px solid ${line.color}88; color:${line.color};">
+          ${line.name}
+        </div>
+        <div>
+          <div class="train-dest">${t.DestinationName}</div>
+          <div class="train-car">${t.Car || "–"}-car train</div>
+        </div>
+        <div class="train-eta ${etaClass}">
+          ${isArr
+            ? (t.Min === "ARR" ? "ARRIVING" : "BOARDING")
+            : `${t.Min}<span class="unit">min</span>`
+          }
+        </div>
+      </div>`;
+  }).join("");
+}
+
+fetchTrains();
+setInterval(fetchTrains, CONFIG.wmataRefreshMs);
+
+// ================================================================
+// WEATHER (Open-Meteo — free, no API key needed)
+// ================================================================
+async function fetchWeather() {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${CONFIG.weatherLat}&longitude=${CONFIG.weatherLon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Weather ${res.status}`);
+    const data = await res.json();
+
+    const current = data.current;
+    const daily = data.daily;
+    const code = current.weather_code;
+    const [icon, desc] = WMO_CODES[code] || ["🌡️", "Unknown"];
+
+    document.getElementById("weatherIcon").textContent = icon;
+    document.getElementById("weatherTemp").textContent = `${Math.round(current.temperature_2m)}°`;
+    document.getElementById("weatherCond").textContent = desc;
+    document.getElementById("weatherHi").textContent = `${Math.round(daily.temperature_2m_max[0])}°`;
+    document.getElementById("weatherLo").textContent = `${Math.round(daily.temperature_2m_min[0])}°`;
+    document.getElementById("weatherHum").textContent = `${current.relative_humidity_2m}%`;
+    document.getElementById("weatherWind").textContent = `${Math.round(current.wind_speed_10m)} mph`;
+  } catch (err) {
+    console.error("Weather error:", err);
+    document.getElementById("weatherCond").textContent = "Unable to load";
+  }
+}
+
+fetchWeather();
+setInterval(fetchWeather, CONFIG.weatherRefreshMs);
+
+// ================================================================
+// GOOGLE CALENDAR (with fallback demo data)
+// ================================================================
+const DEMO_EVENTS = [
+  { title: "Morning Assembly", time: "8:00 AM", location: "Main Hall" },
+  { title: "Advisory — Find Your Why", time: "9:00 AM", location: "Classrooms" },
+  { title: "Faculty Meeting", time: "10:30 AM", location: "Room 204" },
+  { title: "Parent-Teacher Conference", time: "1:00 PM", location: "Library" },
+  { title: "Basketball Practice", time: "3:30 PM", location: "Gymnasium" },
+  { title: "Board Meeting", time: "5:00 PM", location: "Admin Office" },
+];
+
+async function fetchCalendarEvents() {
+  if (!CONFIG.gcalApiKey || !CONFIG.gcalCalendarId) {
+    renderEvents(DEMO_EVENTS);
+    return;
+  }
+
+  try {
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
+
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CONFIG.gcalCalendarId)}/events?key=${CONFIG.gcalApiKey}&timeMin=${startOfDay}&timeMax=${endOfDay}&singleEvents=true&orderBy=startTime`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`GCal ${res.status}`);
+    const data = await res.json();
+
+    const events = (data.items || []).map(item => {
+      const start = item.start.dateTime ? new Date(item.start.dateTime) : null;
+      return {
+        title: item.summary || "Untitled",
+        time: start ? start.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "All Day",
+        location: item.location || "",
+        startDate: start,
+      };
+    });
+
+    renderEvents(events.length > 0 ? events : DEMO_EVENTS);
+  } catch (err) {
+    console.error("Calendar error:", err);
+    renderEvents(DEMO_EVENTS);
+  }
+}
+
+function renderEvents(events) {
+  const list = document.getElementById("eventList");
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMin = now.getMinutes();
+
+  list.innerHTML = events.map(ev => {
+    // Parse time for current/past detection
+    let isPast = false, isCurrent = false;
+    const match = ev.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (match) {
+      let h = parseInt(match[1]);
+      const m = parseInt(match[2]);
+      const ap = match[3].toUpperCase();
+      if (ap === "PM" && h !== 12) h += 12;
+      if (ap === "AM" && h === 12) h = 0;
+      isPast = currentHour > h || (currentHour === h && currentMin > m + 55);
+      isCurrent = currentHour === h && currentMin >= m && currentMin < m + 55;
+    }
+
+    const cls = isCurrent ? "current" : isPast ? "past" : "";
+
+    return `
+      <div class="event-row ${cls}">
+        <div class="event-bar"></div>
+        <div class="event-time">${ev.time}</div>
+        <div class="event-info">
+          <div class="event-title">${ev.title}</div>
+          ${ev.location ? `<div class="event-location">📍 ${ev.location}</div>` : ""}
+        </div>
+        ${isCurrent ? '<div class="now-badge">NOW</div>' : ""}
+      </div>`;
+  }).join("");
+}
+
+fetchCalendarEvents();
+setInterval(fetchCalendarEvents, CONFIG.gcalRefreshMs);
+
+// ================================================================
+// MARQUEE
+// ================================================================
+function initMarquee() {
+  const el = document.getElementById("marquee");
+  const sep = '<span class="sep">◆</span>';
+  const msgs = CONFIG.marqueeMessages.map(m => `<span class="msg">${m}</span>`).join(sep);
+  // Duplicate for seamless loop
+  el.innerHTML = msgs + sep + msgs + sep;
+}
+initMarquee();
+</script>
+
+</body>
+</html>
