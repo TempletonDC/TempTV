@@ -133,8 +133,16 @@
   }
 
   .weather-icon {
-    font-size: 4rem;
+    font-size: 3rem;
     line-height: 1;
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
   }
 
   .weather-temp {
@@ -444,7 +452,7 @@
      ============================================================ -->
 <header class="header">
   <div class="brand">
-    <img class="logo-mark" src="logo.png" alt="Templeton Academy">
+    <img class="logo-mark" src="Templeton_fulllogo_rgb_trans_yellow_inverse.png" alt="Templeton Academy">
     <div class="brand-text">
       <h1>Templeton</h1>
       <div class="academy">Academy</div>
@@ -631,11 +639,13 @@ async function fetchTrains() {
 function renderTrains(trains) {
   const list = document.getElementById("trainList");
 
-  // Filter out trains with no useful info
+  // Filter out trains with no useful info and those under 3 minutes (can't make them)
   const filtered = trains.filter(t =>
     t.Line && t.Line !== "--" && t.Line !== "No" &&
     t.DestinationName && t.DestinationName !== "No Passenger" &&
-    t.DestinationName !== "Train"
+    t.DestinationName !== "Train" &&
+    t.Min !== "ARR" && t.Min !== "BRD" &&
+    !((!isNaN(t.Min)) && parseInt(t.Min) < 3)
   );
 
   if (filtered.length === 0) {
@@ -645,9 +655,9 @@ function renderTrains(trains) {
 
   list.innerHTML = filtered.map(t => {
     const line = WMATA_LINES[t.Line] || { name: t.Line, color: "#666" };
-    const isArr = t.Min === "ARR" || t.Min === "BRD";
-    const isNear = !isArr && !isNaN(t.Min) && parseInt(t.Min) <= 3;
-    const etaClass = isArr ? "arriving" : isNear ? "near" : "";
+    const mins = parseInt(t.Min);
+    const isNear = !isNaN(mins) && mins <= 5;
+    const etaClass = isNear ? "near" : "";
 
     return `
       <div class="train-row">
@@ -660,10 +670,7 @@ function renderTrains(trains) {
           <div class="train-car">${t.Car || "–"}-car train</div>
         </div>
         <div class="train-eta ${etaClass}">
-          ${isArr
-            ? (t.Min === "ARR" ? "ARRIVING" : "BOARDING")
-            : `${t.Min}<span class="unit">min</span>`
-          }
+          ${t.Min}<span class="unit">min</span>
         </div>
       </div>`;
   }).join("");
