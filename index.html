@@ -73,24 +73,6 @@
     flex-shrink: 0;
   }
 
-  .brand-text h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 3rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    line-height: 1.1;
-  }
-
-  .brand-text .academy {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--text);
-    margin-top: 0.15rem;
-  }
-
   /* Clock — center of header */
   .clock-area {
     flex: 1;
@@ -133,16 +115,17 @@
   }
 
   .weather-icon {
-    font-size: 3rem;
+    font-size: 4.2rem;
     line-height: 1;
-    width: 5rem;
-    height: 5rem;
+    width: 5.5rem;
+    height: 5.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
     flex-shrink: 0;
+    overflow: hidden;
   }
 
   .weather-temp {
@@ -320,9 +303,9 @@
   }
 
   .station-name {
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
   }
 
   .live-badge {
@@ -443,7 +426,39 @@
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  /* Google sign-in button */
+  .gcal-signin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 1rem;
+  }
+
+  .gcal-signin button {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+  }
+
+  .gcal-signin button:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .gcal-signin p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
 </head>
 <body>
 
@@ -453,10 +468,6 @@
 <header class="header">
   <div class="brand">
     <img class="logo-mark" src="Templeton_fulllogo_rgb_trans_yellow_inverse.png" alt="Templeton Academy">
-    <div class="brand-text">
-      <h1>Templeton</h1>
-      <div class="academy">Academy</div>
-    </div>
   </div>
 
   <div class="clock-area">
@@ -712,8 +723,16 @@ fetchWeather();
 setInterval(fetchWeather, CONFIG.weatherRefreshMs);
 
 // ================================================================
-// GOOGLE CALENDAR (with fallback demo data)
+// GOOGLE CALENDAR — OAuth via Google Identity Services
 // ================================================================
+const SCOPES = "https://www.googleapis.com/auth/calendar.events.readonly";
+const DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
+
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+let gcalAccessToken = localStorage.getItem("gcal_access_token") || null;
+
 const DEMO_EVENTS = [
   { title: "Morning Assembly", time: "8:00 AM", location: "Main Hall" },
   { title: "Advisory — Find Your Why", time: "9:00 AM", location: "Classrooms" },
@@ -723,23 +742,88 @@ const DEMO_EVENTS = [
   { title: "Board Meeting", time: "5:00 PM", location: "Admin Office" },
 ];
 
-async function fetchCalendarEvents() {
-  if (!CONFIG.gcalApiKey || !CONFIG.gcalCalendarId) {
+// Called when gapi.js loads
+function gapiLoaded() {
+  gapi.load("client", async () => {
+    await gapi.client.init({ discoveryDocs: [DISCOVERY_DOC] });
+    gapiInited = true;
+    maybeStartCalendar();
+  });
+}
+
+// Called when GIS library loads
+function gisLoaded() {
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CONFIG.gcalClientId,
+    scope: SCOPES,
+    callback: (tokenResponse) => {
+      if (tokenResponse.error) {
+        console.error("GIS token error:", tokenResponse);
+        showSignInButton();
+        return;
+      }
+      gcalAccessToken = tokenResponse.access_token;
+      localStorage.setItem("gcal_access_token", gcalAccessToken);
+      // Schedule token refresh before expiry (default ~3600s)
+      const expiresIn = (tokenResponse.expires_in || 3600) - 300;
+      setTimeout(() => { requestToken(true); }, expiresIn * 1000);
+      fetchCalendarEvents();
+    },
+  });
+  gisInited = true;
+  maybeStartCalendar();
+}
+
+function maybeStartCalendar() {
+  if (!gapiInited || !gisInited) return;
+
+  if (!CONFIG.gcalClientId) {
     renderEvents(DEMO_EVENTS);
     return;
   }
 
+  // If we have a stored token, try using it
+  if (gcalAccessToken) {
+    gapi.client.setToken({ access_token: gcalAccessToken });
+    fetchCalendarEvents();
+  } else {
+    showSignInButton();
+  }
+}
+
+function showSignInButton() {
+  const list = document.getElementById("eventList");
+  list.innerHTML = `
+    <div class="gcal-signin">
+      <p>Sign in to see today's events</p>
+      <button onclick="requestToken(false)">Sign in with Google</button>
+    </div>`;
+}
+
+function requestToken(silent) {
+  if (silent) {
+    tokenClient.requestAccessToken({ prompt: "" });
+  } else {
+    tokenClient.requestAccessToken({ prompt: "consent" });
+  }
+}
+
+async function fetchCalendarEvents() {
   try {
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
     const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
 
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CONFIG.gcalCalendarId)}/events?key=${CONFIG.gcalApiKey}&timeMin=${startOfDay}&timeMax=${endOfDay}&singleEvents=true&orderBy=startTime`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`GCal ${res.status}`);
-    const data = await res.json();
+    const response = await gapi.client.calendar.events.list({
+      calendarId: CONFIG.gcalCalendarId,
+      timeMin: startOfDay,
+      timeMax: endOfDay,
+      singleEvents: true,
+      orderBy: "startTime",
+    });
 
-    const events = (data.items || []).map(item => {
+    const items = response.result.items || [];
+    const events = items.map(item => {
       const start = item.start.dateTime ? new Date(item.start.dateTime) : null;
       return {
         title: item.summary || "Untitled",
@@ -752,7 +836,16 @@ async function fetchCalendarEvents() {
     renderEvents(events.length > 0 ? events : DEMO_EVENTS);
   } catch (err) {
     console.error("Calendar error:", err);
-    renderEvents(DEMO_EVENTS);
+    // Token might be expired — clear and show sign-in
+    if (err.status === 401 || err.status === 403) {
+      gcalAccessToken = null;
+      localStorage.removeItem("gcal_access_token");
+      gapi.client.setToken(null);
+      // Try silent re-auth first
+      try { requestToken(true); } catch { showSignInButton(); }
+    } else {
+      renderEvents(DEMO_EVENTS);
+    }
   }
 }
 
@@ -791,8 +884,36 @@ function renderEvents(events) {
   }).join("");
 }
 
-fetchCalendarEvents();
-setInterval(fetchCalendarEvents, CONFIG.gcalRefreshMs);
+// Refresh calendar on interval
+setInterval(() => {
+  if (gcalAccessToken) fetchCalendarEvents();
+}, CONFIG.gcalRefreshMs);
+
+// Wait for external scripts to load, then init
+function waitForLibs() {
+  if (typeof gapi !== "undefined") gapiLoaded();
+  else setTimeout(() => { if (typeof gapi !== "undefined") gapiLoaded(); }, 500);
+
+  if (typeof google !== "undefined" && google.accounts) gisLoaded();
+  else setTimeout(() => { if (typeof google !== "undefined" && google.accounts) gisLoaded(); }, 500);
+}
+// Retry a few times in case scripts are slow to load
+let libRetries = 0;
+function initLibsWithRetry() {
+  const gapiReady = typeof gapi !== "undefined";
+  const gisReady = typeof google !== "undefined" && google.accounts;
+  if (gapiReady && !gapiInited) gapiLoaded();
+  if (gisReady && !gisInited) gisLoaded();
+  if ((!gapiReady || !gisReady) && libRetries < 20) {
+    libRetries++;
+    setTimeout(initLibsWithRetry, 500);
+  } else if (libRetries >= 20 && !gapiInited) {
+    // Libraries failed to load — show demo data
+    console.warn("Google API libraries failed to load, using demo events");
+    renderEvents(DEMO_EVENTS);
+  }
+}
+initLibsWithRetry();
 </script>
 
 </body>
