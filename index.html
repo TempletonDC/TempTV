@@ -51,46 +51,30 @@
   }
 
   /* ============================================================
-     HEADER
+     HEADER — Logo (left) + Weather (right)
      ============================================================ */
   .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 2rem;
-    border-bottom: 2px solid #3a3a3a;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .header::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg,
-      var(--t-red), var(--t-yellow), var(--t-green),
-      var(--t-cyan), var(--t-blue), var(--t-purple), var(--t-pink));
+    padding: 1.5rem 2.5rem;
   }
 
   .brand {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
   }
 
-  /* Templeton question mark logo */
   .logo-mark {
-    height: 56px;
+    height: 80px;
     width: auto;
     flex-shrink: 0;
   }
 
   .brand-text h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.5rem;
+    font-size: 2.2rem;
     font-weight: 400;
     letter-spacing: 0.02em;
     line-height: 1.1;
@@ -98,121 +82,221 @@
 
   .brand-text .academy {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.38em;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
     font-weight: 600;
     color: var(--text);
-    margin-top: -0.05rem;
+    margin-top: 0.1rem;
   }
 
-  .brand-text .subtitle {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--t-cyan);
-    font-weight: 600;
-  }
-
-  /* Clock area */
-  .clock-area {
+  /* Weather area — right side of header */
+  .weather-area {
     text-align: right;
   }
 
-  .clock-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 3.2rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
+  .weather-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+
+  .weather-icon {
+    font-size: 3.5rem;
     line-height: 1;
   }
 
-  .clock-time .ampm {
-    font-size: 1.2rem;
-    color: var(--t-yellow);
-    font-weight: 500;
-    margin-left: 0.25rem;
+  .weather-temp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3.2rem;
+    font-weight: 700;
+    line-height: 1;
   }
 
-  .clock-time .blink {
-    animation: blink 1s step-end infinite;
+  .weather-condition {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 2px;
+    text-align: right;
   }
 
-  @keyframes blink {
-    50% { opacity: 0.25; }
+  .weather-stats {
+    display: flex;
+    gap: 1.8rem;
+    margin-top: 0.6rem;
+    justify-content: flex-end;
   }
 
-  .clock-date {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    letter-spacing: 0.12em;
+  .weather-stat label {
+    display: block;
+    font-size: 0.55rem;
+    color: rgba(255, 255, 255, 0.4);
     text-transform: uppercase;
-    margin-top: 0.25rem;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+
+  .weather-stat span {
+    font-weight: 700;
+    font-size: 0.85rem;
   }
 
   /* ============================================================
-     MAIN GRID
+     MAIN GRID — Calendar (left) + Trains (right)
      ============================================================ */
   .main {
     flex: 1;
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 1rem;
-    padding: 1rem 2rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding: 0 2.5rem 2rem;
     min-height: 0;
   }
 
   /* ============================================================
-     PANEL BASE STYLES
+     PANEL BASE
      ============================================================ */
   .panel {
-    border-radius: 14px;
-    padding: 1.1rem;
+    border-radius: 20px;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
-  .panel-label {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
+  /* ============================================================
+     CALENDAR PANEL (left, green)
+     ============================================================ */
+  .calendar-panel {
+    background: linear-gradient(150deg, #01a88d 0%, var(--t-green) 40%, #015c4e 100%);
+  }
+
+  .calendar-date {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.7rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .event-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow-y: auto;
+  }
+
+  .event-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    padding: 0.55rem 0.5rem;
+    border-radius: 10px;
+    transition: background 0.2s;
+  }
+
+  .event-row.current {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .event-row.past {
+    opacity: 0.4;
+  }
+
+  .event-bar {
+    width: 4px;
+    height: 34px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.5);
+    flex-shrink: 0;
+  }
+
+  .event-row.current .event-bar {
+    background: var(--t-yellow);
+    box-shadow: 0 0 8px rgba(255, 187, 34, 0.4);
+  }
+
+  .event-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+
+  .event-row.current .event-time {
+    color: var(--t-yellow);
+  }
+
+  .event-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .event-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .event-row.past .event-title {
+    text-decoration: line-through;
+  }
+
+  .event-location {
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 1px;
+  }
+
+  .now-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5rem;
+    color: var(--t-yellow);
+    background: rgba(255, 187, 34, 0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    flex-shrink: 0;
   }
 
   /* ============================================================
-     TRAIN PANEL
+     TRAIN PANEL (right, purple)
      ============================================================ */
   .train-panel {
-    background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
-    border: 1px solid #3a3a3a;
-  }
-
-  .train-panel .panel-label {
-    color: var(--t-cyan);
+    background: linear-gradient(150deg, #9b37ad 0%, var(--t-purple) 40%, var(--t-deep-purple) 100%);
   }
 
   .train-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .station-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
   }
 
   .live-badge {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     color: var(--success);
-    background: rgba(74, 222, 128, 0.1);
-    padding: 3px 10px;
-    border-radius: 4px;
-    border: 1px solid rgba(74, 222, 128, 0.25);
-    font-weight: 600;
+    background: rgba(74, 222, 128, 0.12);
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    font-weight: 700;
     animation: livePulse 2s ease-in-out infinite;
   }
 
@@ -231,16 +315,16 @@
 
   .train-row {
     display: grid;
-    grid-template-columns: 5px 52px 1fr auto;
+    grid-template-columns: 5px 56px 1fr auto;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.5rem 0.6rem;
-    border-radius: 8px;
+    padding: 0.5rem 0.5rem;
+    border-radius: 10px;
     transition: background 0.2s;
   }
 
   .train-row:nth-child(odd) {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .train-line-bar {
@@ -266,7 +350,7 @@
 
   .train-car {
     font-size: 0.65rem;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.5);
   }
 
   .train-eta {
@@ -279,7 +363,7 @@
 
   .train-eta .unit {
     font-size: 0.55rem;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.5);
     margin-left: 1px;
   }
 
@@ -303,233 +387,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-
-  /* ============================================================
-     RIGHT COLUMN
-     ============================================================ */
-  .right-col {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    min-height: 0;
-  }
-
-  /* WEATHER PANEL */
-  .weather-panel {
-    background: linear-gradient(135deg, var(--t-green) 0%, #015c4e 100%);
-    border: 1px solid rgba(1, 142, 117, 0.4);
-    flex-shrink: 0;
-  }
-
-  .weather-panel .panel-label {
-    color: var(--t-lime);
-  }
-
-  .weather-body {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .weather-icon {
-    font-size: 3rem;
-    line-height: 1;
-  }
-
-  .weather-temp {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 2.8rem;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .weather-condition {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-top: 2px;
-  }
-
-  .weather-details {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 0.75rem;
-    padding-top: 0.6rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-  }
-
-  .weather-detail label {
-    display: block;
-    font-size: 0.6rem;
     color: rgba(255, 255, 255, 0.5);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .weather-detail span {
-    font-weight: 600;
-    font-size: 0.8rem;
-  }
-
-  .weather-detail span.hi { color: var(--t-yellow); }
-  .weather-detail span.lo { color: var(--t-cyan); }
-
-  /* CALENDAR PANEL */
-  .calendar-panel {
-    background: linear-gradient(135deg, #2d2050, #1e1535);
-    border: 1px solid rgba(130, 47, 145, 0.3);
-    flex: 1;
-    min-height: 0;
-  }
-
-  .calendar-panel .panel-label {
-    color: var(--t-pink);
-  }
-
-  .event-list {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    overflow-y: auto;
-  }
-
-  .event-row {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0.5rem 0.6rem;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: all 0.3s;
-  }
-
-  .event-row.current {
-    background: rgba(245, 182, 233, 0.08);
-    border-color: rgba(245, 182, 233, 0.25);
-  }
-
-  .event-row.past {
-    opacity: 0.35;
-  }
-
-  .event-bar {
-    width: 3px;
-    height: 32px;
-    border-radius: 2px;
-    background: var(--t-purple);
-    flex-shrink: 0;
-  }
-
-  .event-row.current .event-bar {
-    background: var(--t-pink);
-    box-shadow: 0 0 8px rgba(245, 182, 233, 0.4);
-  }
-
-  .event-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    font-weight: 600;
-    min-width: 65px;
-    flex-shrink: 0;
-  }
-
-  .event-row.current .event-time {
-    color: var(--t-pink);
-  }
-
-  .event-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .event-title {
-    font-weight: 600;
     font-size: 0.85rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .event-row.past .event-title {
-    text-decoration: line-through;
-  }
-
-  .event-location {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-  }
-
-  .now-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.5rem;
-    color: var(--t-pink);
-    background: rgba(245, 182, 233, 0.12);
-    padding: 2px 7px;
-    border-radius: 3px;
-    font-weight: 700;
-    flex-shrink: 0;
   }
 
   /* ============================================================
-     FOOTER / MARQUEE
+     UTILITIES
      ============================================================ */
-  .footer-marquee {
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.04);
-    border-top: 1px solid #3a3a3a;
-    padding: 0.45rem 0;
-    position: relative;
-  }
-
-  .footer-marquee::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg,
-      var(--t-red), var(--t-yellow), var(--t-green),
-      var(--t-cyan), var(--t-blue), var(--t-purple), var(--t-pink));
-  }
-
-  .marquee-track {
-    display: inline-block;
-    white-space: nowrap;
-    animation: scroll 35s linear infinite;
-    font-size: 0.78rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-  }
-
-  .marquee-track .sep {
-    display: inline-block;
-    margin: 0 2rem;
-    color: var(--t-yellow);
-    opacity: 0.5;
-  }
-
-  .marquee-track .msg { color: var(--t-blush); }
-
-  @keyframes scroll {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* Status bar */
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.3rem 2rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.55rem;
-    color: var(--text-muted);
-    border-top: 1px solid #2a2a2a;
-  }
-
   /* WMATA line colors */
   .line-RD { --lc: #E51636; }
   .line-OR { --lc: #F68712; }
@@ -541,97 +405,68 @@
   /* Scrollbar */
   ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
-
-  /* Decorative question mark dots — brand motif */
-  .deco-dots {
-    position: absolute;
-    opacity: 0.06;
-    pointer-events: none;
-  }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
 </style>
 </head>
 <body>
 
 <!-- ============================================================
-     HEADER
+     HEADER — Logo + Weather
      ============================================================ -->
 <header class="header">
   <div class="brand">
-    <!-- Templeton Academy question mark logo (all white for dark bg) -->
+    <!-- Templeton Academy question mark logo (yellow on dark bg) -->
     <svg class="logo-mark" viewBox="0 0 80 130" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M24 46 C24 16, 56 16, 56 40 C56 58, 40 60, 40 78 L40 88"
-            stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <circle cx="40" cy="110" r="8" fill="white"/>
+            stroke="#ffbb22" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <circle cx="40" cy="110" r="8" fill="#ffbb22"/>
     </svg>
     <div class="brand-text">
       <h1>Templeton</h1>
       <div class="academy">Academy</div>
-      <div class="subtitle">Campus Information Display</div>
     </div>
   </div>
-  <div class="clock-area">
-    <div class="clock-time" id="clock"></div>
-    <div class="clock-date" id="date"></div>
+
+  <div class="weather-area">
+    <div class="weather-top">
+      <div class="weather-icon" id="weatherIcon">--</div>
+      <div>
+        <div class="weather-temp" id="weatherTemp">--°</div>
+        <div class="weather-condition" id="weatherCond">Loading…</div>
+      </div>
+    </div>
+    <div class="weather-stats">
+      <div class="weather-stat"><label>High</label><span id="weatherHi">--°</span></div>
+      <div class="weather-stat"><label>Low</label><span id="weatherLo">--°</span></div>
+      <div class="weather-stat"><label>Humidity</label><span id="weatherHum">--%</span></div>
+      <div class="weather-stat"><label>Wind</label><span id="weatherWind">-- mph</span></div>
+    </div>
   </div>
 </header>
 
 <!-- ============================================================
-     MAIN CONTENT
+     MAIN CONTENT — Calendar (left) + Metro (right)
      ============================================================ -->
 <main class="main">
-  <!-- LEFT: WMATA TRAINS -->
+  <!-- LEFT: CALENDAR / EVENTS -->
+  <div class="panel calendar-panel">
+    <div class="calendar-date" id="calendarDate">Loading…</div>
+    <div class="event-list" id="eventList">
+      <!-- Events will be rendered here -->
+    </div>
+  </div>
+
+  <!-- RIGHT: WMATA TRAINS -->
   <div class="panel train-panel">
     <div class="train-header">
-      <div class="panel-label">🚇 Gallery Pl-Chinatown — Next Arrivals</div>
-      <div class="live-badge" id="liveBadge">● LIVE</div>
+      <div class="station-name">Gallery Place / Chinatown</div>
+      <div class="live-badge" id="liveBadge">LIVE</div>
     </div>
     <div class="train-list" id="trainList">
       <div class="train-loading">Loading train predictions…</div>
     </div>
   </div>
-
-  <!-- RIGHT: WEATHER + CALENDAR -->
-  <div class="right-col">
-    <!-- WEATHER -->
-    <div class="panel weather-panel">
-      <div class="panel-label">☀ Current Weather</div>
-      <div class="weather-body">
-        <div class="weather-icon" id="weatherIcon">—</div>
-        <div>
-          <div class="weather-temp" id="weatherTemp">--°</div>
-          <div class="weather-condition" id="weatherCond">Loading…</div>
-        </div>
-      </div>
-      <div class="weather-details">
-        <div class="weather-detail"><label>High</label><span class="hi" id="weatherHi">--°</span></div>
-        <div class="weather-detail"><label>Low</label><span class="lo" id="weatherLo">--°</span></div>
-        <div class="weather-detail"><label>Humidity</label><span id="weatherHum">--%</span></div>
-        <div class="weather-detail"><label>Wind</label><span id="weatherWind">-- mph</span></div>
-      </div>
-    </div>
-
-    <!-- CALENDAR / EVENTS -->
-    <div class="panel calendar-panel">
-      <div class="panel-label">📅 Today's Schedule</div>
-      <div class="event-list" id="eventList">
-        <!-- Events will be rendered here -->
-      </div>
-    </div>
-  </div>
 </main>
-
-<!-- ============================================================
-     FOOTER MARQUEE
-     ============================================================ -->
-<div class="footer-marquee">
-  <div class="marquee-track" id="marquee"></div>
-</div>
-
-<div class="status-bar">
-  <span id="lastUpdate">Last updated: --:--</span>
-  <span id="dataSource">Connecting…</span>
-</div>
 
 <script>
 // ================================================================
@@ -656,14 +491,6 @@ const CONFIG = {
   gcalApiKey: "",       // YOUR_GOOGLE_CALENDAR_API_KEY
   gcalCalendarId: "c_1a16eeb0cec7d70c595f8bcb63667419243c8c58965a4d6ea2906270bf6d914f@group.calendar.google.com",
   gcalRefreshMs: 300000, // 5 minutes
-
-  // Marquee messages
-  marqueeMessages: [
-    "Welcome to Templeton Academy — Never Stop Being Curious!",
-    "Restorative Work sessions are held Monday mornings",
-    "Bus departures at 3:15 PM — Check the main office for schedule changes",
-    "The City Is Our Classroom",
-  ],
 };
 
 // ================================================================
@@ -709,26 +536,22 @@ const WMO_CODES = {
 };
 
 // ================================================================
-// CLOCK
+// CALENDAR DATE HEADER
 // ================================================================
-function updateClock() {
+function updateCalendarDate() {
   const now = new Date();
-  const h = now.getHours();
-  const m = String(now.getMinutes()).padStart(2, "0");
-  const ampm = h >= 12 ? "PM" : "AM";
-  const h12 = h % 12 || 12;
-  const showColon = now.getSeconds() % 2 === 0;
+  const day = now.getDate();
+  const suffix = (day === 1 || day === 21 || day === 31) ? "st"
+               : (day === 2 || day === 22) ? "nd"
+               : (day === 3 || day === 23) ? "rd" : "th";
+  const weekday = now.toLocaleDateString("en-US", { weekday: "long" });
+  const month = now.toLocaleDateString("en-US", { month: "long" });
 
-  document.getElementById("clock").innerHTML =
-    `${h12}<span class="blink">:</span>${m}<span class="ampm">${ampm}</span>`;
-
-  document.getElementById("date").textContent =
-    now.toLocaleDateString("en-US", {
-      weekday: "long", month: "long", day: "numeric", year: "numeric"
-    });
+  document.getElementById("calendarDate").textContent =
+    `${weekday}, ${month} ${day}${suffix}, ${now.getFullYear()}`;
 }
-setInterval(updateClock, 1000);
-updateClock();
+updateCalendarDate();
+setInterval(updateCalendarDate, 60000);
 
 // ================================================================
 // WMATA TRAINS
@@ -742,18 +565,13 @@ async function fetchTrains() {
     if (!res.ok) throw new Error(`WMATA ${res.status}`);
     const data = await res.json();
     renderTrains(data.Trains || []);
-    document.getElementById("liveBadge").textContent = "● LIVE";
-    document.getElementById("dataSource").textContent = "● WMATA Live Data";
-    document.getElementById("dataSource").style.color = "#4ADE80";
+    document.getElementById("liveBadge").textContent = "LIVE";
+    document.getElementById("liveBadge").style.color = "";
   } catch (err) {
     console.error("WMATA error:", err);
-    document.getElementById("liveBadge").textContent = "⚠ ERROR";
+    document.getElementById("liveBadge").textContent = "ERROR";
     document.getElementById("liveBadge").style.color = "#f55657";
-    document.getElementById("dataSource").textContent = "⚠ WMATA connection issue — retrying…";
-    document.getElementById("dataSource").style.color = "#f55657";
   }
-  document.getElementById("lastUpdate").textContent =
-    `Last updated: ${new Date().toLocaleTimeString()}`;
 }
 
 function renderTrains(trains) {
@@ -771,7 +589,7 @@ function renderTrains(trains) {
     return;
   }
 
-  list.innerHTML = filtered.map((t, i) => {
+  list.innerHTML = filtered.map(t => {
     const line = WMATA_LINES[t.Line] || { name: t.Line, color: "#666" };
     const isArr = t.Min === "ARR" || t.Min === "BRD";
     const isNear = !isArr && !isNaN(t.Min) && parseInt(t.Min) <= 3;
@@ -913,18 +731,6 @@ function renderEvents(events) {
 
 fetchCalendarEvents();
 setInterval(fetchCalendarEvents, CONFIG.gcalRefreshMs);
-
-// ================================================================
-// MARQUEE
-// ================================================================
-function initMarquee() {
-  const el = document.getElementById("marquee");
-  const sep = '<span class="sep">◆</span>';
-  const msgs = CONFIG.marqueeMessages.map(m => `<span class="msg">${m}</span>`).join(sep);
-  // Duplicate for seamless loop
-  el.innerHTML = msgs + sep + msgs + sep;
-}
-initMarquee();
 </script>
 
 </body>
